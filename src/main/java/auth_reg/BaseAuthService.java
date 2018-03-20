@@ -3,7 +3,7 @@ package auth_reg;
 import java.sql.*;
 
 
-public class ImlAuthService implements AuthService {
+public class BaseAuthService implements AuthService {
     private Connection connect;
     private Statement stmt;
 

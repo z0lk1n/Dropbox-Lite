@@ -1,6 +1,7 @@
 package server;
 
-import auth_reg.ImlAuthService;
+import auth_reg.BaseAuthService;
+import common.Const;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,14 +9,14 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class Server {
+public class Server implements Const {
     private Vector<ClientHandler> clients;
-    private ImlAuthService authService;
+    private BaseAuthService authService;
 
     public Server() {
-        try(ServerSocket serverSocket = new ServerSocket(8989)) {
+        try(ServerSocket serverSocket = new ServerSocket(PORT)) {
             clients = new Vector<>();
-            authService = new ImlAuthService();
+            authService = new BaseAuthService();
             authService.connect();
             System.out.println("Server started... Waiting clients...");
             while(true) {
