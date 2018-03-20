@@ -14,7 +14,7 @@ public class Server implements Const {
     private BaseAuthService authService;
 
     public Server() {
-        try(ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try(ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             clients = new Vector<>();
             authService = new BaseAuthService();
             authService.connect();

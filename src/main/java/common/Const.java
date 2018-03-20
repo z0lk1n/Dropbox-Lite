@@ -1,8 +1,9 @@
 package common;
 
 public interface Const {
-    int PORT = 8989;
+    int SERVER_PORT = 8989;
     String SERVER_ADDR = "localhost";
+    String CORE_PATH = "/";
     String SYSTEM_SYMBOL = "/";
     String CLOSE_CONNECTION = "/end";
     String AUTH = "/auth";
