@@ -1,6 +1,6 @@
 package common;
 
-public class BaseFileService implements FileService, Const {
+public class BaseFileService implements common.FileService, common.Const {
     @Override
     public void uploadFile() {
 

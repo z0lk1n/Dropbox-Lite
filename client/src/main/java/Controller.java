@@ -1,6 +1,3 @@
-package client;
-
-import common.Const;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -50,7 +47,7 @@ public class Controller implements Initializable, Const {
 
     public void connect() {
         try {
-            socket = new Socket(SERVER_ADDR, SERVER_PORT);
+            socket = new Socket(Const.SERVER_ADDR, Const.SERVER_PORT);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 

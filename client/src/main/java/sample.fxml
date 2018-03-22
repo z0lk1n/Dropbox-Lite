@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <HBox alignment="center" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="client.Controller">
+      fx:controller="Controller">
     <VBox HBox.hgrow="ALWAYS">
         <HBox fx:id="authPanel">
             <TextField fx:id="loginField" promptText="Логин" HBox.hgrow="ALWAYS"/>
