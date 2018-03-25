@@ -1,5 +1,3 @@
-package common;
-
 public interface Const {
     int SERVER_PORT = 8989;
     String SERVER_ADDR = "localhost";

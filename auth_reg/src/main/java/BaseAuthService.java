@@ -1,5 +1,3 @@
-package auth_reg;
-
 import java.sql.*;
 
 
