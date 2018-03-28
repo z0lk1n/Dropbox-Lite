@@ -2,16 +2,17 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class ClientMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Dropbox-Lite");
-        //primaryStage.getIcons().add(new Image("file:ico.png"));
-        //primaryStage.setScene(new Scene(root, 500, 550));
+        primaryStage.getIcons().add(new Image("file:ico.png"));
+        primaryStage.setScene(new Scene(root, 500, 550));
         primaryStage.show();
         primaryStage.setResizable(false);
     }
