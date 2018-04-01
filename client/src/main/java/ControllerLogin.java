@@ -3,9 +3,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,11 +12,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable, Const {
-    @FXML
-    TextArea textArea;
-    @FXML
-    HBox authPanel;
+public class ControllerLogin implements Initializable, Const {
     @FXML
     TextField loginField;
     @FXML
@@ -32,11 +26,7 @@ public class Controller implements Initializable, Const {
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
         if (authorized) {
-            authPanel.setVisible(false);
-            authPanel.setManaged(false);
-        } else {
-            authPanel.setVisible(true);
-            authPanel.setManaged(true);
+
         }
     }
 
