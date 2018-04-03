@@ -11,7 +11,7 @@ public class ClientMain extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         primaryStage.setTitle("Dropbox-Lite");
 //        primaryStage.getIcons().add(new Image("file:ico.png"));
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
         primaryStage.show();
         primaryStage.setResizable(false);
     }

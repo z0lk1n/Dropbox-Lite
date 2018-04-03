@@ -1,9 +1,15 @@
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,9 +20,23 @@ import java.util.ResourceBundle;
 
 public class ControllerLogin implements Initializable, Const {
     @FXML
-    TextField loginField;
+    private TextField loginField;
     @FXML
-    PasswordField passField;
+    private PasswordField passField;
+    @FXML
+    private Button loginBtn;
+    @FXML
+    private Button cancelBtn;
+    @FXML
+    private TextField regLoginField;
+    @FXML
+    private PasswordField regPassField;
+    @FXML
+    private PasswordField regRePassField;
+    @FXML
+    private Button regLoginBtn;
+    @FXML
+    private Button regCancelBtn;
 
     private Socket socket;
     private DataOutputStream out;
@@ -26,7 +46,7 @@ public class ControllerLogin implements Initializable, Const {
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
         if (authorized) {
-
+            openMainForm();
         }
     }
 
@@ -40,7 +60,6 @@ public class ControllerLogin implements Initializable, Const {
             socket = new Socket(Const.SERVER_ADDR, Const.SERVER_PORT);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-
             Thread t = new Thread(() -> {
                 try {
 
@@ -88,5 +107,22 @@ public class ControllerLogin implements Initializable, Const {
             alert.setContentText(msg);
             alert.showAndWait();
         });
+    }
+
+    public void openMainForm(){
+        Stage stage = (Stage) loginBtn.getScene().getWindow();
+        stage.close();
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("table.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Dropbox-Lite");
+        stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+        stage.show();
+        stage.setResizable(false);
     }
 }

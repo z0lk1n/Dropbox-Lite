@@ -12,10 +12,10 @@
    <tabs>
       <Tab closable="false" text="Sing In">
          <content>
-            <AnchorPane prefHeight="261.0" prefWidth="211.0">
+            <AnchorPane prefHeight="261.0" prefWidth="189.0">
                <children>
-                   <Button layoutX="14.0" layoutY="177.0" mnemonicParsing="false" prefWidth="81.0" text="Cancel" />
-                   <Button onAction="#sendAuthMsg" layoutX="108.0" layoutY="177.0" mnemonicParsing="false" prefWidth="81.0" text="Login" />
+                   <Button fx:id="cancelBtn" layoutX="14.0" layoutY="177.0" mnemonicParsing="false" prefWidth="81.0" text="Cancel" />
+                   <Button fx:id="loginBtn" layoutX="108.0" layoutY="177.0" mnemonicParsing="false" onAction="#sendAuthMsg" prefWidth="81.0" text="Login" />
                    <Label layoutX="14.0" layoutY="50.0" text="Login:" />
                    <PasswordField fx:id="passField" layoutX="8.0" layoutY="129.0" prefWidth="187.0" />
                    <TextField fx:id="loginField" layoutX="8.0" layoutY="73.0" prefWidth="187.0" />
@@ -26,15 +26,15 @@
       </Tab>
       <Tab closable="false" text="Sing Up">
          <content>
-            <AnchorPane prefHeight="261.0" prefWidth="204.0">
+            <AnchorPane prefHeight="261.0" prefWidth="203.0">
                <children>
-                  <Button layoutX="8.0" layoutY="208.0" mnemonicParsing="false" prefWidth="81.0" text="Cancel" />
-                  <Button layoutX="102.0" layoutY="208.0" mnemonicParsing="false" prefWidth="81.0" text="Login" />
+                  <Button fx:id="regCancelBtn" layoutX="8.0" layoutY="208.0" mnemonicParsing="false" prefWidth="81.0" text="Cancel" />
+                  <Button fx:id="regLoginBtn" layoutX="102.0" layoutY="208.0" mnemonicParsing="false" prefWidth="81.0" text="Login" />
                   <Label layoutX="14.0" layoutY="22.0" text="Login:" />
-                  <PasswordField layoutX="8.0" layoutY="101.0" prefWidth="187.0" />
-                  <TextField layoutX="8.0" layoutY="45.0" prefWidth="187.0" />
+                  <PasswordField fx:id="regPassField" layoutX="8.0" layoutY="101.0" prefWidth="187.0" />
+                  <TextField fx:id="regLoginField" layoutX="8.0" layoutY="45.0" prefWidth="187.0" />
                   <Label layoutX="14.0" layoutY="81.0" text="Password:" />
-                  <PasswordField layoutX="9.0" layoutY="161.0" prefWidth="187.0" />
+                  <PasswordField fx:id="regRePassField" layoutX="9.0" layoutY="161.0" prefWidth="187.0" />
                   <Label layoutX="14.0" layoutY="141.0" text="Confirm password:" />
                </children>
             </AnchorPane>
