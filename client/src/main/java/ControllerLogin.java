@@ -62,6 +62,13 @@ public class ControllerLogin implements Initializable, Const {
             out = new DataOutputStream(socket.getOutputStream());
             Thread t = new Thread(() -> {
                 try {
+                    while (true) {
+                        String s = in.readUTF();
+                        if (s.startsWith("/authok ")) {
+                            setAuthorized(true);
+                            break;
+                        }
+                    }
 
                 } catch (Exception e) {
                     showAlert("Сервер перестал отвечать, повторите попытку соединения.");
