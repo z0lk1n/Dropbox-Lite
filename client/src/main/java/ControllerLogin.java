@@ -57,14 +57,14 @@ public class ControllerLogin implements Initializable, Const {
 
     public void connect() {
         try {
-            socket = new Socket(Const.SERVER_ADDR, Const.SERVER_PORT);
+            socket = new Socket(Const.SERVER_ADDRESS, Const.SERVER_PORT);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             Thread t = new Thread(() -> {
                 try {
                     while (true) {
                         String s = in.readUTF();
-                        if (s.startsWith("/authok ")) {
+                        if (s.startsWith(AUTH_SUCCESSFUl)) {
                             setAuthorized(true);
                             break;
                         }
@@ -98,7 +98,7 @@ public class ControllerLogin implements Initializable, Const {
             connect();
         }
         try {
-            out.writeUTF("/auth " + loginField.getText() + " " + passField.getText());
+            out.writeUTF(AUTH + loginField.getText() + " " + passField.getText());
             loginField.clear();
             passField.clear();
         } catch (IOException e) {

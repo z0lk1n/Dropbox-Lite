@@ -8,6 +8,10 @@ public class Server implements Const {
     private Vector<ClientHandler> clients;
     private BaseAuthService authService;
 
+    public BaseAuthService getAuthService() {
+        return authService;
+    }
+
     public Server() {
         try(ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             clients = new Vector<>();
