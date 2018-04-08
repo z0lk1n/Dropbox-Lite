@@ -60,6 +60,7 @@ public class ControllerLogin implements Initializable, Const {
             socket = new Socket(Const.SERVER_ADDRESS, Const.SERVER_PORT);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+
             Thread t = new Thread(() -> {
                 try {
                     while (true) {
@@ -69,11 +70,23 @@ public class ControllerLogin implements Initializable, Const {
                             break;
                         }
                     }
-
-                } catch (Exception e) {
+                    while (true) {
+                        String s = in.readUTF();
+                        if (s.startsWith("/")) {
+                            if (s.startsWith("/fileslist ")) {
+//                                String[] data = s.split("\\s");
+                                Platform.runLater(() -> {
+//                                    filesList.clear();
+//                                    for (int i = 1; i < data.length; i++) {
+//                                        filesList.addAll(data[i]);
+//                                    }
+                                });
+                            }
+                        }
+                    }
+                } catch (IOException e) {
                     showAlert(Const.LOST_SERVER);
                 } finally {
-                    setAuthorized(false);
                     try {
                         socket.close();
                     } catch (IOException e) {
@@ -116,20 +129,19 @@ public class ControllerLogin implements Initializable, Const {
         });
     }
 
-    public void openMainForm(){
-        Stage stage = (Stage) loginBtn.getScene().getWindow();
-        stage.close();
-        Parent root = null;
+    public void openMainForm() {
         try {
-            root = FXMLLoader.load(getClass().getResource("table.fxml"));
-        } catch (IOException e) {
+            Stage stage = (Stage) loginBtn.getScene().getWindow();
+            stage.close();
+            Parent root = FXMLLoader.load(getClass().getResource("table.fxml"));
+            stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle(Const.TITLE_FORM);
+            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+            stage.show();
+            stage.setResizable(false);
+        }catch(Exception e) {
             e.printStackTrace();
         }
-        stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle(Const.TITLE_FORM);
-        stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
-        stage.show();
-        stage.setResizable(false);
     }
 }

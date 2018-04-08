@@ -28,6 +28,7 @@ public class ClientHandler implements Const {
                                 String newUsername = data[1];
                                 if (server.getAuthService().authentication(newUsername, data[2])) {
                                     username = newUsername;
+                                    sendMsg(Const.AUTH_SUCCESSFUl + username);
                                     server.addClient(this);
                                     break;
                                 }
@@ -62,6 +63,8 @@ public class ClientHandler implements Const {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
+                    username = null;
+                    server.removeClient(this);
                     try {
                         socket.close();
                     } catch (IOException e) {
@@ -70,6 +73,14 @@ public class ClientHandler implements Const {
                 }
             }).start();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMsg(String msg) {
+        try {
+            out.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
