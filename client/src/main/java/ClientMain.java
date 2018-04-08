@@ -9,7 +9,7 @@ public class ClientMain extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
-        primaryStage.setTitle("Dropbox-Lite");
+        primaryStage.setTitle(Const.TITLE_FORM);
 //        primaryStage.getIcons().add(new Image("file:ico.png"));
         primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
         primaryStage.show();

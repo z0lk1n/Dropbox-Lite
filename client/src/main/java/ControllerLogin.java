@@ -71,7 +71,7 @@ public class ControllerLogin implements Initializable, Const {
                     }
 
                 } catch (Exception e) {
-                    showAlert("Сервер перестал отвечать, повторите попытку соединения.");
+                    showAlert(Const.LOST_SERVER);
                 } finally {
                     setAuthorized(false);
                     try {
@@ -85,13 +85,13 @@ public class ControllerLogin implements Initializable, Const {
             t.start();
 
         } catch (IOException e) {
-            showAlert("Не удалось подключиться к серверу. Проверьте сетевое соединение.");
+            showAlert(Const.FAIL_CONNECT_SERVER);
         }
     }
 
     public void sendAuthMsg() {
         if (loginField.getText().isEmpty() || passField.getText().isEmpty()) {
-            showAlert("Указаны неполные данные авторизации");
+            showAlert(Const.INCOMPLETE_AUTH);
             return;
         }
         if (socket == null || socket.isClosed()) {
@@ -109,7 +109,7 @@ public class ControllerLogin implements Initializable, Const {
     public void showAlert(String msg) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Возникли проблемы");
+            alert.setTitle(Const.OOPS);
             alert.setHeaderText(null);
             alert.setContentText(msg);
             alert.showAndWait();
@@ -127,7 +127,7 @@ public class ControllerLogin implements Initializable, Const {
         }
         stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Dropbox-Lite");
+        stage.setTitle(Const.TITLE_FORM);
         stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
         stage.show();
         stage.setResizable(false);

@@ -9,8 +9,7 @@ public class ClientHandler implements Const {
     private DataInputStream in;
     private DataOutputStream out;
     private BaseFileService fileService;
-    private String login;
-
+    private String username;
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -26,15 +25,11 @@ public class ClientHandler implements Const {
                         if (msg.startsWith(Const.AUTH)) {
                             String[] data = msg.split("\\s");
                             if (data.length == 3) {
-                                int id = server.getAuthService().getIdByLoginAndPass(data[1], data[2]);
-                                if (id > 0) {
-                                    if (!server.isNickBusy(newNick)) {
-                                        nick = newNick;
-                                        server.addClient(this);
-                                        break;
-                                    } else {
-                                        sendMsg("Учетная запись занята");
-                                    }
+                                String newUsername = data[1];
+                                if (server.getAuthService().authentication(newUsername, data[2])) {
+                                    username = newUsername;
+                                    server.addClient(this);
+                                    break;
                                 }
                             }
                         }
@@ -42,21 +37,24 @@ public class ClientHandler implements Const {
                     while (true) {
                         String msg = in.readUTF();
                         if (msg.startsWith(Const.SYSTEM_SYMBOL)) {
-                            if (msg.startsWith(Const.DELETE_FILE))  {
+                            if (msg.startsWith(Const.DELETE_FILE)) {
                                 String[] data = msg.split("\\s", 2);
-                                fileService.deleteFile(this, data[1]);
+                                fileService.deleteFile(username, data[1]);
                             }
-                            if (msg.startsWith(Const.DOWNLOAD_FILE))    {
-
+                            if (msg.startsWith(Const.DOWNLOAD_FILE)) {
+                                String[] data = msg.split("\\s", 2);
+                                fileService.downloadFile(username, data[1]);
                             }
-                            if (msg.startsWith(Const.UPLOAD_FILE))  {
-
+                            if (msg.startsWith(Const.UPLOAD_FILE)) {
+                                String[] data = msg.split("\\s", 2);
+                                fileService.uploadFile(username, data[1]);
                             }
-                            if (msg.startsWith(Const.CHANGE_FILE))  {
-
+                            if (msg.startsWith(Const.CHANGE_FILE)) {
+                                String[] data = msg.split("\\s", 2);
+                                fileService.changeFile(username, data[1]);
                             }
-                            if(msg.equals(Const.FILES_LIST))    {
-
+                            if (msg.equals(Const.FILES_LIST)) {
+                                fileService.filesList(username);
                             }
                             if (msg.equals(Const.CLOSE_CONNECTION)) break;
                         }
@@ -72,12 +70,8 @@ public class ClientHandler implements Const {
                 }
             }).start();
 
-        }catch(IOException e)   {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public String getLogin()    {
-        return login;
     }
 }

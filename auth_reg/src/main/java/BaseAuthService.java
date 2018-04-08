@@ -22,15 +22,15 @@ public class BaseAuthService implements AuthService {
         }
     }
 
-    public int getIdByLoginAndPass(String login, String pass)   {
+    public Boolean authentication(String login, String pass)   {
         try{
             ResultSet rs = stmt.executeQuery("SELECT id FROM users WHERE login = '" + login + "' AND password = '" + pass + "';");
             if(rs.next())   {
-                return rs.getInt("id");
+                return true;
             }
         }catch(SQLException e)  {
             e.printStackTrace();
         }
-        return -1;
+        return false;
     }
 }

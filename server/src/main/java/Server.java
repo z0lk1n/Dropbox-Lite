@@ -17,16 +17,16 @@ public class Server implements Const {
             clients = new Vector<>();
             authService = new BaseAuthService();
             authService.connect();
-            System.out.println("Server started... Waiting clients...");
+            System.out.println(Const.RUN_SERVER);
             while(true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("Client connected" + socket.getInetAddress() + " " + socket.getPort() + " " + socket.getLocalPort());
+                System.out.println(Const.CLIENT_CONNECT + socket.getInetAddress() + " " + socket.getPort() + " " + socket.getLocalPort());
                 new ClientHandler(this, socket);
             }
         }catch(IOException e)   {
             e.printStackTrace();
         }catch(SQLException | ClassNotFoundException e)   {
-            System.out.println("Не удалось запустить сервис авторизации");
+            System.out.println(Const.FAIL_AUTH_SERVICE);
         }finally {
             authService.disconnect();
         }
