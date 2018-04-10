@@ -11,9 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -38,10 +35,9 @@ public class ControllerLogin implements Initializable, Const {
     @FXML
     private Button regCancelBtn;
 
-    private Socket socket;
-    private DataOutputStream out;
-    private DataInputStream in;
     private boolean authorized;
+    private Socket socket;
+    private ClientCore core;
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
@@ -52,54 +48,13 @@ public class ControllerLogin implements Initializable, Const {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setAuthorized(false);
-    }
-
-    public void connect() {
         try {
             socket = new Socket(Const.SERVER_ADDRESS, Const.SERVER_PORT);
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-
-            Thread t = new Thread(() -> {
-                try {
-                    while (true) {
-                        String s = in.readUTF();
-                        if (s.startsWith(AUTH_SUCCESSFUl)) {
-                            setAuthorized(true);
-                            break;
-                        }
-                    }
-                    while (true) {
-                        String s = in.readUTF();
-                        if (s.startsWith("/")) {
-                            if (s.startsWith("/fileslist ")) {
-//                                String[] data = s.split("\\s");
-                                Platform.runLater(() -> {
-//                                    filesList.clear();
-//                                    for (int i = 1; i < data.length; i++) {
-//                                        filesList.addAll(data[i]);
-//                                    }
-                                });
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    showAlert(Const.LOST_SERVER);
-                } finally {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            t.setDaemon(true);
-            t.start();
-
-        } catch (IOException e) {
-            showAlert(Const.FAIL_CONNECT_SERVER);
+            core = new ClientCore(socket);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        setAuthorized(false);
     }
 
     public void sendAuthMsg() {
@@ -108,15 +63,11 @@ public class ControllerLogin implements Initializable, Const {
             return;
         }
         if (socket == null || socket.isClosed()) {
-            connect();
+            core.connect();
         }
-        try {
-            out.writeUTF(AUTH + loginField.getText() + " " + passField.getText());
-            loginField.clear();
-            passField.clear();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        core.login(loginField.getText(), passField.getText());
+        loginField.clear();
+        passField.clear();
     }
 
     public void showAlert(String msg) {
@@ -140,7 +91,7 @@ public class ControllerLogin implements Initializable, Const {
             stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
             stage.show();
             stage.setResizable(false);
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
