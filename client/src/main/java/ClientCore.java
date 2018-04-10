@@ -13,12 +13,14 @@ public class ClientCore {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private ControllerLogin login;
+    private boolean authorized;
 
     public ClientCore(Socket socket) throws Exception   {
         this.socket = socket;
         in = new ObjectInputStream(socket.getInputStream());
         out = new ObjectOutputStream(socket.getOutputStream());
-        out.writeObject("/get");
+        out.writeObject(Const.FILES_LIST);
         out.flush();
         Object obj = in.readObject();
         localFiles = (List<File>)obj;
@@ -31,7 +33,7 @@ public class ClientCore {
                     while (true) {
                         String s = in.readUTF();
                         if (s.startsWith(Const.AUTH_SUCCESSFUl)) {
-                            setAuthorized(true);
+                            login.setAuthorized(true);
                             break;
                         }
                     }
@@ -50,7 +52,7 @@ public class ClientCore {
                         }
                     }
                 } catch (IOException e) {
-                    //showAlert(Const.LOST_SERVER);
+                    login.showAlert(Const.LOST_SERVER);
                 } finally {
                     try {
                         socket.close();
@@ -62,8 +64,8 @@ public class ClientCore {
             t.setDaemon(true);
             t.start();
 
-        } catch (IOException e) {
-            //showAlert(Const.FAIL_CONNECT_SERVER);
+        } catch (Exception e) {
+            login.showAlert(Const.FAIL_CONNECT_SERVER);
         }
     }
 
