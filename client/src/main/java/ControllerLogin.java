@@ -1,10 +1,8 @@
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -35,16 +33,8 @@ public class ControllerLogin implements Initializable, Const {
     @FXML
     private Button regCancelBtn;
 
-    private boolean authorized;
     private Socket socket;
     private ClientCore core;
-
-    public void setAuthorized(boolean authorized) {
-        this.authorized = authorized;
-        if (authorized) {
-            openMainForm();
-        }
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -54,12 +44,12 @@ public class ControllerLogin implements Initializable, Const {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setAuthorized(false);
+        core.setAuthorized(false);
     }
 
     public void sendAuthMsg() {
         if (loginField.getText().isEmpty() || passField.getText().isEmpty()) {
-            showAlert(Const.INCOMPLETE_AUTH);
+            core.showAlert(Const.INCOMPLETE_AUTH);
             return;
         }
         if (socket == null || socket.isClosed()) {
@@ -68,16 +58,6 @@ public class ControllerLogin implements Initializable, Const {
         core.login(loginField.getText(), passField.getText());
         loginField.clear();
         passField.clear();
-    }
-
-    public void showAlert(String msg) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(Const.OOPS);
-            alert.setHeaderText(null);
-            alert.setContentText(msg);
-            alert.showAndWait();
-        });
     }
 
     public void openMainForm() {

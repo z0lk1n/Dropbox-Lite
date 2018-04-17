@@ -1,4 +1,5 @@
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientCore {
-    public List<File> localFiles = new ArrayList<>();
+    private List<File> localFiles = new ArrayList<>();
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private ControllerLogin login;
     private boolean authorized;
+    private ControllerLogin controllerLogin;
 
     public ClientCore(Socket socket) throws Exception   {
         this.socket = socket;
@@ -26,6 +27,13 @@ public class ClientCore {
         localFiles = (List<File>)obj;
     }
 
+    public void setAuthorized(boolean authorized) {
+        this.authorized = authorized;
+        if (authorized) {
+            controllerLogin.openMainForm();
+        }
+    }
+
     public void connect() {
         try {
             Thread t = new Thread(() -> {
@@ -33,7 +41,7 @@ public class ClientCore {
                     while (true) {
                         String s = in.readUTF();
                         if (s.startsWith(Const.AUTH_SUCCESSFUl)) {
-                            login.setAuthorized(true);
+                            setAuthorized(true);
                             break;
                         }
                     }
@@ -52,7 +60,7 @@ public class ClientCore {
                         }
                     }
                 } catch (IOException e) {
-                    login.showAlert(Const.LOST_SERVER);
+                    showAlert(Const.LOST_SERVER);
                 } finally {
                     try {
                         socket.close();
@@ -65,7 +73,7 @@ public class ClientCore {
             t.start();
 
         } catch (Exception e) {
-            login.showAlert(Const.FAIL_CONNECT_SERVER);
+            showAlert(Const.FAIL_CONNECT_SERVER);
         }
     }
 
@@ -90,11 +98,25 @@ public class ClientCore {
         }
     }
 
+    public void showAlert(String msg) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(Const.OOPS);
+            alert.setHeaderText(null);
+            alert.setContentText(msg);
+            alert.showAndWait();
+        });
+    }
+
     public void login(String login, String password)    {
         try {
             out.writeUTF(Const.AUTH + login + " " + password);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<File> getLocalFiles() {
+        return localFiles;
     }
 }
