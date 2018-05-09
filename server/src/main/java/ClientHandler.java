@@ -10,6 +10,7 @@ public class ClientHandler implements Const {
     private DataOutputStream out;
     private BaseFileService fileService;
     private String username;
+    private String password;
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -26,7 +27,8 @@ public class ClientHandler implements Const {
                             String[] data = msg.split("\\s");
                             if (data.length == 3) {
                                 String newUsername = data[1];
-                                if (server.getAuthService().authentication(newUsername, data[2])) {
+                                String password = BaseFileService.getHash(data[2]);
+                                if (server.getAuthService().authentication(newUsername, password)) {
                                     username = newUsername;
                                     sendMsg(Const.AUTH_SUCCESSFUl + username);
                                     server.addClient(this);
