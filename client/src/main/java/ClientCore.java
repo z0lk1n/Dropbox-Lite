@@ -8,14 +8,13 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientCore {
-    private List<File> localFiles = new ArrayList<>();
+    private List<String> localFiles = new ArrayList<>();
     private Socket socket;
     private DataOutputStream out;
     private DataInputStream in;
@@ -54,12 +53,12 @@ public class ClientCore {
                         String s = in.readUTF();
                         if (s.startsWith("/")) {
                             if (s.startsWith("/fileslist ")) {
-//                                String[] data = s.split("\\s");
+                                String[] data = s.split("\\s");
                                 Platform.runLater(() -> {
-//                                    filesList.clear();
-//                                    for (int i = 1; i < data.length; i++) {
-//                                        filesList.addAll(data[i]);
-//                                    }
+                                    localFiles.clear();
+                                    for (int i = 1; i < data.length; i++) {
+                                        localFiles.add(data[i]);
+                                    }
                                 });
                             }
                         }
@@ -82,7 +81,7 @@ public class ClientCore {
         }
     }
 
-    public void addFile(File file) {
+    public void addFile(String file) {
         if (localFiles.contains(file)) return;
         localFiles.add(file);
         try {
@@ -93,7 +92,7 @@ public class ClientCore {
         }
     }
 
-    public void removeFile(File file) {
+    public void removeFile(String file) {
         if (!localFiles.contains(file)) return;
         localFiles.remove(file);
         try {
@@ -143,7 +142,7 @@ public class ClientCore {
         });
     }
 
-    public List<File> getLocalFiles() {
+    public List<String> getLocalFiles() {
         return localFiles;
     }
 }

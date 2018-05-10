@@ -1,10 +1,10 @@
 public interface Const {
-    int SERVER_PORT = 8981;
+    int SERVER_PORT = 8983;
     String SERVER_ADDRESS = "localhost";
 
     String TITLE_FORM = "Dropbox-Lite";
 
-    String CORE_PATH = "/";
+    String CORE_PATH = "DIR/";
     String SYSTEM_SYMBOL = "/";
     String CLOSE_CONNECTION = "/end";
     String AUTH = "/auth ";

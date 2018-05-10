@@ -1,34 +1,42 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class BaseFileService implements FileService, Const {
     @Override
-    public void uploadFile(String client, String command) {
+    public void uploadFile(Message msg) {
+        try {
+            Files.createDirectories(Paths.get(Const.CORE_PATH + msg.getClient()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
-    public void downloadFile(String client, String command) {
+    public void downloadFile(Message msg) {
 
     }
 
     @Override
-    public void deleteFile(String client, String command) {
+    public void deleteFile(Message msg) {
 
     }
 
     @Override
-    public void changeFile(String client, String command) {
+    public void changeFile(Message msg) {
 
     }
 
     @Override
-    public void filesList(String client) {
+    public void filesList(Message msg) {
 
     }
 
-    public static String getHash(String password) {
+    public String getHash(String password) {
         String algorithm = "SHA-256";
         String salt = "salt";
 
