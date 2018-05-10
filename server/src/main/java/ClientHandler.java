@@ -4,8 +4,8 @@ import java.net.Socket;
 public class ClientHandler implements Const {
     private Server server;
     private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private InputStream inputStream;
+    private OutputStream outputStream;
     private BaseFileService fileService;
     private String username;
 
@@ -13,47 +13,41 @@ public class ClientHandler implements Const {
         try {
             this.server = server;
             this.socket = socket;
-            this.in = new ObjectInputStream(socket.getInputStream());
-            this.out = new ObjectOutputStream(socket.getOutputStream());
-
+            this.inputStream = socket.getInputStream();
+            this.outputStream = socket.getOutputStream();
             new Thread(() -> {
                 try {
+                    ObjectInputStream in = new ObjectInputStream(inputStream);
                     while (true) {
-                        String msg = in.readUTF();
-                        if (msg.startsWith(Const.AUTH)) {
-                            String[] data = msg.split("\\s");
-                            if (data.length == 3) {
-                                String newUsername = data[1];
-                                String password = fileService.getHash(data[2]);
+                        AuthMessage msg = (AuthMessage)in.readObject();
+                        if (msg.getCommand().equals(Commands.AUTH)) {
+                                String newUsername = msg.getClient();
+                                String password = fileService.getHash(msg.getPassword());
                                 if (server.getAuthService().authentication(newUsername, password)) {
                                     username = newUsername;
-                                    sendMsg(new Message(Const.AUTH_SUCCESSFUl + username));
+                                    sendMsg(new AuthMessage(Commands.AUTH_SUCCESSFUl, username));
                                     server.addClient(this);
                                     break;
                                 }
-                            }
                         }
                     }
                     while (true) {
-                        Message msg = (Message) in.readObject();
-                        String command = msg.getCommand();
+                        FileMessage msg = (FileMessage) in.readObject();
+                        Commands command = msg.getCommand();
 
-                        if (command.equals(Const.DELETE_FILE)) {
-                            fileService.deleteFile(new Message(Const.DELETE_FILE, username, msg.getFileName()));
-                        }
-                        if (command.equals(Const.DOWNLOAD_FILE)) {
-                            fileService.downloadFile(new Message(Const.DOWNLOAD_FILE, username, msg.getFileName()));
-                        }
-                        if (command.equals(Const.UPLOAD_FILE)) {
-                            fileService.uploadFile(new Message(Const.UPLOAD_FILE, username, msg.getFileName(), msg.getFileData()));
-                        }
-                        if (command.equals(Const.CHANGE_FILE)) {
-                            fileService.changeFile(new Message(Const.CHANGE_FILE, username, msg.getFileName()));
-                        }
-                        if (command.equals(Const.FILES_LIST)) {
-                            fileService.filesList(new Message(Const.FILES_LIST, username));
-                        }
-                        if (command.equals(Const.CLOSE_CONNECTION)) break;
+                        if (command.equals(Commands.DELETE_FILE))
+                            fileService.deleteFile(msg);
+
+                        if (command.equals(Commands.DOWNLOAD_FILE))
+                            fileService.downloadFile(msg);
+
+                        if (command.equals(Commands.UPLOAD_FILE))
+                            fileService.uploadFile(msg);
+
+                        if (command.equals(Commands.FILES_LIST))
+                            fileService.filesList(msg);
+
+                        if (command.equals(Commands.CLOSE_CONNECTION)) break;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -73,8 +67,9 @@ public class ClientHandler implements Const {
         }
     }
 
-    public void sendMsg(Message msg) {
+    public synchronized void sendMsg(Message msg) {
         try {
+            ObjectOutputStream out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {

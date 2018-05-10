@@ -1,7 +1,6 @@
 public interface FileService {
-    void uploadFile(Message msg);
-    void downloadFile(Message msg);
-    void deleteFile(Message msg);
-    void changeFile(Message msg);
-    void filesList(Message msg);
+    void uploadFile(FileMessage msg);
+    void downloadFile(FileMessage msg);
+    void deleteFile(FileMessage msg);
+    void filesList(FileMessage msg);
 }

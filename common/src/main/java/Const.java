@@ -1,19 +1,10 @@
 public interface Const {
-    int SERVER_PORT = 8983;
+    int SERVER_PORT = 8989;
     String SERVER_ADDRESS = "localhost";
 
     String TITLE_FORM = "Dropbox-Lite";
 
     String CORE_PATH = "DIR/";
-    String SYSTEM_SYMBOL = "/";
-    String CLOSE_CONNECTION = "/end";
-    String AUTH = "/auth ";
-    String AUTH_SUCCESSFUl = "/authok ";
-    String FILES_LIST = "/fileslist";
-    String DELETE_FILE = "/del ";
-    String DOWNLOAD_FILE = "/get ";
-    String UPLOAD_FILE = "/add ";
-    String CHANGE_FILE = "/edit ";
 
     String ACC_BUSY = "Account is busy!";
     String FAIL_AUTH_SERVICE = "Failed to start the authorization service";

@@ -7,36 +7,47 @@ import java.util.Base64;
 
 public class BaseFileService implements FileService, Const {
     @Override
-    public void uploadFile(Message msg) {
+    public void uploadFile(FileMessage msg) {
+        String client = msg.getClient();
+        String fileName = msg.getFileName();
+        byte[] fileData = msg.getFileData();
         try {
-            Files.createDirectories(Paths.get(Const.CORE_PATH + msg.getClient()));
+            Files.createDirectories(Paths.get(Const.CORE_PATH + client));
+            Files.write(Paths.get(Const.CORE_PATH + client + "/" + fileName), fileData);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
-    public void downloadFile(Message msg) {
-
+    public void downloadFile(FileMessage msg) {
+        String client = msg.getClient();
+        String fileName = msg.getFileName();
+        byte[] fileData = null;
+        try {
+            fileData = Files.readAllBytes(Paths.get(Const.CORE_PATH + client + "/" + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void deleteFile(Message msg) {
-
+    public void deleteFile(FileMessage msg) {
+        String client = msg.getClient();
+        String fileName = msg.getFileName();
+        try {
+            Files.delete(Paths.get(Const.CORE_PATH + client + "/" + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void changeFile(Message msg) {
+    public void filesList(FileMessage msg) {
 
     }
 
-    @Override
-    public void filesList(Message msg) {
-
-    }
-
-    public String getHash(String password) {
+    public static String getHash(String password) {
         String algorithm = "SHA-256";
         String salt = "salt";
 
