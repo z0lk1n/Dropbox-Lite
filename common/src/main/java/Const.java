@@ -1,5 +1,5 @@
 public interface Const {
-    int SERVER_PORT = 8989;
+    int SERVER_PORT = 8981;
     String SERVER_ADDRESS = "localhost";
 
     String TITLE_FORM = "Dropbox-Lite";

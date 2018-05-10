@@ -1,10 +1,15 @@
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,25 +17,25 @@ import java.util.List;
 public class ClientCore {
     private List<File> localFiles = new ArrayList<>();
     private Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private DataOutputStream out;
+    private DataInputStream in;
     private boolean authorized;
-    private ControllerLogin controllerLogin;
+    private Stage stageLogin;
 
-    public ClientCore(Socket socket) throws Exception   {
+    public ClientCore(Socket socket) throws Exception {
         this.socket = socket;
-        in = new ObjectInputStream(socket.getInputStream());
-        out = new ObjectOutputStream(socket.getOutputStream());
-        out.writeObject(Const.FILES_LIST);
-        out.flush();
-        Object obj = in.readObject();
-        localFiles = (List<File>)obj;
+        in = new DataInputStream(socket.getInputStream());
+        out = new DataOutputStream(socket.getOutputStream());
+//        out.writeObject(Const.FILES_LIST);
+//        out.flush();
+//        Object obj = in.readObject();
+//        localFiles = (List<File>)obj;
     }
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
         if (authorized) {
-            controllerLogin.openMainForm();
+            openMainForm();
         }
     }
 
@@ -77,23 +82,24 @@ public class ClientCore {
         }
     }
 
-    public void addFile(File file)  {
-        if(localFiles.contains(file)) return;
+    public void addFile(File file) {
+        if (localFiles.contains(file)) return;
         localFiles.add(file);
-        try{
-            out.writeObject(file);
-            out.flush();
-        }catch (Exception e) {
+        try {
+//            out.writeObject(file);
+//            out.flush();
+        } catch (Exception e) {
             System.out.println("Can't send file");
         }
     }
+
     public void removeFile(File file) {
-        if(!localFiles.contains(file)) return;
+        if (!localFiles.contains(file)) return;
         localFiles.remove(file);
-        try{
-            out.writeObject(file);
-            out.flush();
-        }catch(Exception e) {
+        try {
+//            out.writeObject(file);
+//            out.flush();
+        } catch (Exception e) {
             System.out.println("Can't remove file from server");
         }
     }
@@ -108,12 +114,33 @@ public class ClientCore {
         });
     }
 
-    public void login(String login, String password)    {
+    public void login(String login, String password) {
         try {
             out.writeUTF(Const.AUTH + login + " " + password);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setStageLogin(Stage stageLogin) {
+        this.stageLogin = stageLogin;
+    }
+
+    public void openMainForm() {
+        Platform.runLater(() -> {
+            try {
+                stageLogin.close();
+                Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle(Const.TITLE_FORM);
+                stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+                stage.show();
+                stage.setResizable(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public List<File> getLocalFiles() {

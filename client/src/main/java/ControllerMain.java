@@ -5,7 +5,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class ControllerTable {
+public class ControllerMain {
     private ObservableList<Data> data = FXCollections.observableArrayList();
     private ClientCore core;
 
