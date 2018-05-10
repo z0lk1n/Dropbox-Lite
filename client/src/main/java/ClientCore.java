@@ -28,7 +28,6 @@ public class ClientCore {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void setAuthorized(boolean authorized) {

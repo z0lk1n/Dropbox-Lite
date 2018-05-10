@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class ClientHandler implements Const {
     private Server server;
@@ -35,18 +37,44 @@ public class ClientHandler implements Const {
                         FileMessage msg = (FileMessage) in.readObject();
                         Commands command = msg.getCommand();
 
-                        if (command.equals(Commands.DELETE_FILE))
-                            fileService.deleteFile(msg);
+                        if (command.equals(Commands.DELETE_FILE)) {
+//                            fileService.deleteFile(msg);
+                            String client = msg.getClient();
+                            String fileName = msg.getFileName();
+                            try {
+                                Files.delete(Paths.get(Const.CORE_PATH + client + "/" + fileName));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (command.equals(Commands.DOWNLOAD_FILE)) {
+//                            fileService.downloadFile(msg);
+                            String client = msg.getClient();
+                            String fileName = msg.getFileName();
+                            byte[] fileData = null;
+                            try {
+                                fileData = Files.readAllBytes(Paths.get(Const.CORE_PATH + client + "/" + fileName));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, client, fileName, fileData));
+                        }
+                        if (command.equals(Commands.UPLOAD_FILE)) {
+//                            fileService.uploadFile(msg);
+                            String client = msg.getClient();
+                            String fileName = msg.getFileName();
+                            byte[] fileData = msg.getFileData();
+                            try {
+                                Files.createDirectories(Paths.get(Const.CORE_PATH + client));
+                                Files.write(Paths.get(Const.CORE_PATH + client + "/" + fileName), fileData);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (command.equals(Commands.FILES_LIST)) {
+//                            fileService.filesList(msg);
 
-                        if (command.equals(Commands.DOWNLOAD_FILE))
-                            fileService.downloadFile(msg);
-
-                        if (command.equals(Commands.UPLOAD_FILE))
-                            fileService.uploadFile(msg);
-
-                        if (command.equals(Commands.FILES_LIST))
-                            fileService.filesList(msg);
-
+                        }
                         if (command.equals(Commands.CLOSE_CONNECTION)) break;
                     }
                 } catch (Exception e) {
