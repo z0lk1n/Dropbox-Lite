@@ -14,6 +14,8 @@ public class ClientHandler implements Const {
     private BaseFileService fileService;
     private String username;
     private List<String> filesList;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -24,23 +26,25 @@ public class ClientHandler implements Const {
             this.filesList = new ArrayList<>();
             new Thread(() -> {
                 try {
-                    ObjectInputStream in = new ObjectInputStream(inputStream);
                     while (true) {
-                        AuthMessage msg = (AuthMessage)in.readObject();
+                        in = new ObjectInputStream(inputStream);
+                        AuthMessage msg = (AuthMessage) in.readObject();
                         if (msg.getCommand().equals(Commands.AUTH)) {
-                                String newUsername = msg.getClient();
-                                String password = fileService.getHash(msg.getPassword());
-                                if (server.getAuthService().authentication(newUsername, password)) {
-                                    username = newUsername;
-                                    sendMsg(new AuthMessage(Commands.AUTH_SUCCESSFUl, username));
-                                    server.addClient(this);
-                                    getFilesList();
-                                    break;
-                                }
+                            String newUsername = msg.getClient();
+                            String password = fileService.getHash(msg.getPassword());
+                            if (server.getAuthService().authentication(newUsername, password)) {
+                                username = newUsername;
+                                sendMsg(new AuthMessage(Commands.AUTH_SUCCESSFUl, username));
+                                server.addClient(this);
+                                getFilesList();
+                                sendMsg(new FileMessage(Commands.FILES_LIST, username, filesList));
+                                break;
+                            }
                         }
                     }
                     while (true) {
-                        FileMessage msg = (FileMessage)in.readObject();
+                        in = new ObjectInputStream(inputStream);
+                        FileMessage msg = (FileMessage) in.readObject();
                         Commands command = msg.getCommand();
 
                         if (command.equals(Commands.DELETE_FILE)) {
@@ -102,13 +106,18 @@ public class ClientHandler implements Const {
         }
     }
 
-    public synchronized void sendMsg(Message msg) {
+    public synchronized void sendMsg(Object msg) {
         try {
-            ObjectOutputStream out = new ObjectOutputStream(outputStream);
+            out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                socket.close();
+            } catch (IOException e1) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -119,12 +128,14 @@ public class ClientHandler implements Const {
             if (!Files.exists(path))
                 Files.createDirectories(path);
 
+            filesList.clear();
+
             Files.list(path)
                     .map(Path::getFileName)
                     .map(Path::toString)
                     .forEach(s -> filesList.add(s));
 
-        }catch (IOException e)  {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

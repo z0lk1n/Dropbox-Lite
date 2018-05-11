@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class ControllerMain {
-    private ObservableList<String> filesList;
+    private static ObservableList<String> filesList;
     private static ClientCore core;
 
     @FXML
@@ -30,11 +30,11 @@ public class ControllerMain {
     @FXML
     private void initialize() {
         initData();
+        refreshFilesList();
     }
 
     private void initData() {
-
-        filesList = FXCollections.observableArrayList("2222222.txt", "111.txt", "adadadad.txt");
+        filesList = FXCollections.observableArrayList();
         filesListView.setItems(filesList);
 
         filesListView.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -60,6 +60,7 @@ public class ControllerMain {
         Platform.runLater(() -> {
             core.getFile(focusFile());
         });
+        refreshFilesList();
     }
 
     public void upload() {
@@ -75,21 +76,23 @@ public class ControllerMain {
 //            stage.display(selectedFile);
             }
 
-            byte[] fileData = new byte[0];
+            byte[] fileData = null;
             try {
                 fileData = Files.readAllBytes(Paths.get(selectedFile.getPath()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            core.addFile(focusFile(), fileData);
+            core.addFile(selectedFile.getName(), fileData);
         });
+        refreshFilesList();
     }
 
     public void delete() {
         Platform.runLater(() -> {
             core.removeFile(focusFile());
         });
+        refreshFilesList();
     }
 
     public String focusFile() {
@@ -98,5 +101,12 @@ public class ControllerMain {
 
     public static void setCore(ClientCore core) {
         ControllerMain.core = core;
+    }
+
+    public void refreshFilesList() {
+        Platform.runLater(() -> {
+        filesList.clear();
+        filesList.addAll(core.getLocalFiles());
+        });
     }
 }

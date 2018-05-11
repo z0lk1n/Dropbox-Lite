@@ -8,20 +8,27 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientCore {
     private List<String> localFiles = new ArrayList<>();
+    private String localDir;
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
     private boolean authorized;
     private Stage stageLogin;
     private String login;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     public ClientCore(Socket socket) {
         this.socket = socket;
+        this.localDir = "/home/vitaly/tmpFiles/";
         try {
             this.inputStream = socket.getInputStream();
             this.outputStream = socket.getOutputStream();
@@ -41,8 +48,8 @@ public class ClientCore {
         try {
             Thread t = new Thread(() -> {
                 try {
-                    ObjectInputStream in = new ObjectInputStream(inputStream);
                     while (true) {
+                        in = new ObjectInputStream(inputStream);
                         AuthMessage msg = (AuthMessage) in.readObject();
                         if (msg.getCommand().equals(Commands.AUTH_SUCCESSFUl)) {
                             setAuthorized(true);
@@ -50,14 +57,25 @@ public class ClientCore {
                         }
                     }
                     while (true) {
+                        in = new ObjectInputStream(inputStream);
                         FileMessage msg = (FileMessage) in.readObject();
                         if (msg.getCommand().equals(Commands.FILES_LIST)) {
-                            Platform.runLater(() -> {
-                                localFiles.clear();
-                                localFiles = msg.getFileList();
-                            });
+                            localFiles.clear();
+                            localFiles = msg.getFileList();
                         }
-                        localFiles.forEach(s -> System.out.println(s));
+                        if (msg.getCommand().equals(Commands.DOWNLOAD_FILE)) {
+                            String fileName = msg.getFileName();
+                            byte[] fileData = msg.getFileData();
+                            try {
+                                Path path = Paths.get(localDir);
+                                if (!Files.exists(path))
+                                    Files.createDirectories(path);
+
+                                Files.write(Paths.get(path + "/" + fileName), fileData);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     showAlert(Const.LOST_SERVER);
@@ -78,19 +96,20 @@ public class ClientCore {
     }
 
     public void getFile(String file) {
-//        if (!localFiles.contains(file)) return;
-        sendMsg(new FileMessage(Commands.UPLOAD_FILE, login, file));
+        if (!localFiles.contains(file)) return;
+        sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, login, file));
+
     }
 
     public void addFile(String file, byte[] fileData) {
-//        if (localFiles.contains(file)) return;
-//        localFiles.add(file);
+        if (localFiles.contains(file)) return;
+        localFiles.add(file);
         sendMsg(new FileMessage(Commands.UPLOAD_FILE, login, file, fileData));
     }
 
     public void removeFile(String file) {
-//        if (!localFiles.contains(file)) return;
-//        localFiles.remove(file);
+        if (!localFiles.contains(file)) return;
+        localFiles.remove(file);
         sendMsg(new FileMessage(Commands.DELETE_FILE, login, file));
     }
 
@@ -139,13 +158,18 @@ public class ClientCore {
         return localFiles;
     }
 
-    public synchronized void sendMsg(Message msg) {
+    public synchronized void sendMsg(Object msg) {
         try {
-            ObjectOutputStream out = new ObjectOutputStream(outputStream);
+            out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
+            try {
+                socket.close();
+            } catch (IOException e1) {
+                e.printStackTrace();
+            }
         }
     }
 }
