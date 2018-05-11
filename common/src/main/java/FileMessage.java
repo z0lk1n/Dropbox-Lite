@@ -5,9 +5,18 @@ public class FileMessage extends Message {
     private byte[] fileData;
     private List<String> fileList;
 
+    public FileMessage(Commands command, String client) {
+        super(command, client);
+    }
+
     public FileMessage(Commands command, String client, String fileName) {
         super(command, client);
         this.fileName = fileName;
+    }
+
+    public FileMessage(Commands command, String client, List<String> fileList) {
+        super(command, client);
+        this.fileList = fileList;
     }
 
     public FileMessage(Commands command, String client, String fileName, byte[] fileData) {

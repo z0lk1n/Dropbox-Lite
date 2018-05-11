@@ -1,37 +1,102 @@
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.Callback;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class ControllerMain {
-    private ObservableList<Data> data = FXCollections.observableArrayList();
-    private ClientCore core;
+    private ObservableList<String> filesList;
+    private static ClientCore core;
 
     @FXML
-    private TableView<Data> tableData;
+    private ListView<String> filesListView;
     @FXML
-    private TableColumn<Data, String> nameColumn;
+    private Button uploadBtn;
     @FXML
-    private TableColumn<Data, String> sizeColumn;
+    private Button downloadBtn;
     @FXML
-    private TableColumn<Data, String> dateColumn;
+    private Button deleteBtn;
 
     @FXML
-    private void initialize()   {
+    private void initialize() {
         initData();
-
-        nameColumn.setCellValueFactory(new PropertyValueFactory<Data, String>("name"));
-        sizeColumn.setCellValueFactory(new PropertyValueFactory<Data, String>("size"));
-        dateColumn.setCellValueFactory(new PropertyValueFactory<Data, String>("date"));
-
-        tableData.setItems(data);
     }
 
     private void initData() {
-        data.add(new Data("file1", "150KBytes", "19.10.2018"));
-        data.add(new Data("file2", "250KBytes", "19.09.2018"));
-        data.add(new Data("file3", "350KBytes", "19.08.2018"));
+
+        filesList = FXCollections.observableArrayList("2222222.txt", "111.txt", "adadadad.txt");
+        filesListView.setItems(filesList);
+
+        filesListView.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                return new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!empty) {
+                            setText(item);
+                        } else {
+                            setGraphic(null);
+                            setText(null);
+                        }
+                    }
+                };
+            }
+        });
+    }
+
+    public void download() {
+        Platform.runLater(() -> {
+            core.getFile(focusFile());
+        });
+    }
+
+    public void upload() {
+        Platform.runLater(() -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open file");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("All Files", "*.*");
+            fileChooser.getExtensionFilters().add(extFilter);
+            Stage stage = (Stage) uploadBtn.getScene().getWindow();
+            File selectedFile = fileChooser.showOpenDialog(stage);
+
+            if (selectedFile != null) {
+//            stage.display(selectedFile);
+            }
+
+            byte[] fileData = new byte[0];
+            try {
+                fileData = Files.readAllBytes(Paths.get(selectedFile.getPath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            core.addFile(focusFile(), fileData);
+        });
+    }
+
+    public void delete() {
+        Platform.runLater(() -> {
+            core.removeFile(focusFile());
+        });
+    }
+
+    public String focusFile() {
+        return filesListView.getFocusModel().getFocusedItem();
+    }
+
+    public static void setCore(ClientCore core) {
+        ControllerMain.core = core;
     }
 }

@@ -1,7 +1,10 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Const {
     private Server server;
@@ -10,6 +13,7 @@ public class ClientHandler implements Const {
     private OutputStream outputStream;
     private BaseFileService fileService;
     private String username;
+    private List<String> filesList;
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -17,6 +21,7 @@ public class ClientHandler implements Const {
             this.socket = socket;
             this.inputStream = socket.getInputStream();
             this.outputStream = socket.getOutputStream();
+            this.filesList = new ArrayList<>();
             new Thread(() -> {
                 try {
                     ObjectInputStream in = new ObjectInputStream(inputStream);
@@ -29,12 +34,13 @@ public class ClientHandler implements Const {
                                     username = newUsername;
                                     sendMsg(new AuthMessage(Commands.AUTH_SUCCESSFUl, username));
                                     server.addClient(this);
+                                    getFilesList();
                                     break;
                                 }
                         }
                     }
                     while (true) {
-                        FileMessage msg = (FileMessage) in.readObject();
+                        FileMessage msg = (FileMessage)in.readObject();
                         Commands command = msg.getCommand();
 
                         if (command.equals(Commands.DELETE_FILE)) {
@@ -65,7 +71,6 @@ public class ClientHandler implements Const {
                             String fileName = msg.getFileName();
                             byte[] fileData = msg.getFileData();
                             try {
-                                Files.createDirectories(Paths.get(Const.CORE_PATH + client));
                                 Files.write(Paths.get(Const.CORE_PATH + client + "/" + fileName), fileData);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -73,7 +78,9 @@ public class ClientHandler implements Const {
                         }
                         if (command.equals(Commands.FILES_LIST)) {
 //                            fileService.filesList(msg);
-
+                            String client = msg.getClient();
+                            getFilesList();
+                            sendMsg(new FileMessage(Commands.FILES_LIST, client, filesList));
                         }
                         if (command.equals(Commands.CLOSE_CONNECTION)) break;
                     }
@@ -105,7 +112,20 @@ public class ClientHandler implements Const {
         }
     }
 
-    public String getUsername() {
-        return username;
+    private void getFilesList() {
+        try {
+            Path path = Paths.get(Const.CORE_PATH + username);
+
+            if (!Files.exists(path))
+                Files.createDirectories(path);
+
+            Files.list(path)
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .forEach(s -> filesList.add(s));
+
+        }catch (IOException e)  {
+            e.printStackTrace();
+        }
     }
 }

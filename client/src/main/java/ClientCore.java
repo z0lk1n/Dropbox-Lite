@@ -51,12 +51,13 @@ public class ClientCore {
                     }
                     while (true) {
                         FileMessage msg = (FileMessage) in.readObject();
-                            if (msg.getCommand().equals(Commands.FILES_LIST)) {
-                                Platform.runLater(() -> {
-                                    localFiles.clear();
-                                    localFiles = msg.getFileList();
-                                });
-                            }
+                        if (msg.getCommand().equals(Commands.FILES_LIST)) {
+                            Platform.runLater(() -> {
+                                localFiles.clear();
+                                localFiles = msg.getFileList();
+                            });
+                        }
+                        localFiles.forEach(s -> System.out.println(s));
                     }
                 } catch (Exception e) {
                     showAlert(Const.LOST_SERVER);
@@ -77,20 +78,24 @@ public class ClientCore {
     }
 
     public void getFile(String file) {
-        if (!localFiles.contains(file)) return;
+//        if (!localFiles.contains(file)) return;
         sendMsg(new FileMessage(Commands.UPLOAD_FILE, login, file));
     }
 
     public void addFile(String file, byte[] fileData) {
-        if (localFiles.contains(file)) return;
-        localFiles.add(file);
+//        if (localFiles.contains(file)) return;
+//        localFiles.add(file);
         sendMsg(new FileMessage(Commands.UPLOAD_FILE, login, file, fileData));
     }
 
     public void removeFile(String file) {
-        if (!localFiles.contains(file)) return;
-        localFiles.remove(file);
+//        if (!localFiles.contains(file)) return;
+//        localFiles.remove(file);
         sendMsg(new FileMessage(Commands.DELETE_FILE, login, file));
+    }
+
+    public void getFilesList() {
+        sendMsg(new FileMessage(Commands.FILES_LIST, login));
     }
 
     public void showAlert(String msg) {
@@ -123,6 +128,7 @@ public class ClientCore {
                 stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
                 stage.show();
                 stage.setResizable(false);
+                ControllerMain.setCore(this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
