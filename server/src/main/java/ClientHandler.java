@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientHandler implements Const {
+class ClientHandler implements Const {
     private Server server;
     private Socket socket;
     private InputStream inputStream;
@@ -17,7 +17,7 @@ public class ClientHandler implements Const {
     private String client;
     private List<String> filesList;
 
-    public ClientHandler(Server server, Socket socket) {
+    ClientHandler(Server server, Socket socket) {
         try {
             this.server = server;
             this.socket = socket;
@@ -41,7 +41,7 @@ public class ClientHandler implements Const {
                                 break;
                             }
                         }
-                        if(msg.getCommand().equals(Commands.REG)) {
+                        if (msg.getCommand().equals(Commands.REG)) {
                             String newClient = msg.getClient();
                             String password = fileService.getHash(msg.getPassword());
                             if (server.getRegService().registration(newClient, password)) {
@@ -116,7 +116,7 @@ public class ClientHandler implements Const {
         }
     }
 
-    public synchronized void sendMsg(Object msg) {
+    private synchronized void sendMsg(Object msg) {
         try {
             out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);

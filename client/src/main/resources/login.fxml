@@ -3,42 +3,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <TabPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ControllerLogin">
-    <tabs>
-        <Tab closable="false" text="Sing In">
-            <content>
-                <AnchorPane prefHeight="261.0" prefWidth="189.0">
-                    <children>
-                        <Label layoutX="14.0" layoutY="50.0" text="Login:"/>
-                        <TextField fx:id="loginField" layoutX="8.0" layoutY="73.0" prefWidth="187.0" text="admin"/>
-                        <Label layoutX="14.0" layoutY="109.0" text="Password:"/>
-                        <PasswordField fx:id="passField" layoutX="8.0" layoutY="129.0" prefWidth="187.0"
-                                       onAction="#sendAuthMsg" text="password"/>
-                        <Button fx:id="loginBtn" layoutX="108.0" layoutY="177.0" mnemonicParsing="false"
-                                onAction="#sendAuthMsg" prefWidth="81.0" text="Login"/>
-                        <Button fx:id="cancelBtn" layoutX="14.0" layoutY="177.0" mnemonicParsing="false"
-                                onAction="#clearLoginFields" prefWidth="81.0" text="Cancel"/>
-                    </children>
-                </AnchorPane>
-            </content>
-        </Tab>
-        <Tab closable="false" text="Sing Up">
-            <content>
-                <AnchorPane prefHeight="261.0" prefWidth="203.0">
-                    <children>
-                        <Label layoutX="14.0" layoutY="22.0" text="Login:"/>
-                        <TextField fx:id="regLoginField" layoutX="8.0" layoutY="45.0" prefWidth="187.0"/>
-                        <Label layoutX="14.0" layoutY="81.0" text="Password:"/>
-                        <PasswordField fx:id="regPassField" layoutX="8.0" layoutY="101.0" prefWidth="187.0"/>
-                        <Label layoutX="14.0" layoutY="141.0" text="Confirm password:"/>
-                        <PasswordField fx:id="regRePassField" layoutX="9.0" layoutY="161.0" onAction="#sendRegMsg"
-                                       prefWidth="187.0"/>
-                        <Button fx:id="regLoginBtn" layoutX="102.0" layoutY="208.0" mnemonicParsing="false"
-                                onAction="#sendRegMsg" prefWidth="81.0" text="Login"/>
-                        <Button fx:id="regCancelBtn" layoutX="8.0" layoutY="208.0" mnemonicParsing="false"
-                                onAction="#clearRegFields" prefWidth="81.0" text="Cancel"/>
-                    </children>
-                </AnchorPane>
-            </content>
-        </Tab>
-    </tabs>
+    <Tab closable="false" text="Sing In">
+        <AnchorPane prefHeight="261.0" prefWidth="189.0">
+            <Label layoutX="14.0" layoutY="50.0" text="Login:"/>
+            <TextField fx:id="loginField" layoutX="8.0" layoutY="73.0" prefWidth="187.0" text="admin"/>
+            <Label layoutX="14.0" layoutY="109.0" text="Password:"/>
+            <PasswordField fx:id="passField" layoutX="8.0" layoutY="129.0" prefWidth="187.0"
+                           onAction="#sendAuthMsg" text="password"/>
+            <Button fx:id="loginBtn" layoutX="108.0" layoutY="177.0" mnemonicParsing="false"
+                    onAction="#sendAuthMsg" prefWidth="81.0" text="Login"/>
+            <Button layoutX="14.0" layoutY="177.0" mnemonicParsing="false"
+                    onAction="#clearLoginFields" prefWidth="81.0" text="Cancel"/>
+        </AnchorPane>
+    </Tab>
+    <Tab closable="false" text="Sing Up">
+        <AnchorPane prefHeight="261.0" prefWidth="203.0">
+            <Label layoutX="14.0" layoutY="22.0" text="Login:"/>
+            <TextField fx:id="regLoginField" layoutX="8.0" layoutY="45.0" prefWidth="187.0"/>
+            <Label layoutX="14.0" layoutY="81.0" text="Password:"/>
+            <PasswordField fx:id="regPassField" layoutX="8.0" layoutY="101.0" prefWidth="187.0"/>
+            <Label layoutX="14.0" layoutY="141.0" text="Confirm password:"/>
+            <PasswordField fx:id="regRePassField" layoutX="9.0" layoutY="161.0" onAction="#sendRegMsg"
+                           prefWidth="187.0"/>
+            <Button fx:id="regLoginBtn" layoutX="102.0" layoutY="208.0" mnemonicParsing="false"
+                    onAction="#sendRegMsg" prefWidth="81.0" text="Login"/>
+            <Button layoutX="8.0" layoutY="208.0" mnemonicParsing="false"
+                    onAction="#clearRegFields" prefWidth="81.0" text="Cancel"/>
+        </AnchorPane>
+    </Tab>
 </TabPane>

@@ -5,21 +5,21 @@ public class FileMessage extends Message {
     private byte[] fileData;
     private List<String> fileList;
 
-    public FileMessage(Commands command) {
+    FileMessage(Commands command) {
         super(command);
     }
 
-    public FileMessage(Commands command, List<String> fileList) {
+    FileMessage(Commands command, List<String> fileList) {
         super(command);
         this.fileList = fileList;
     }
 
-    public FileMessage(Commands command, String fileName) {
+    FileMessage(Commands command, String fileName) {
         super(command);
         this.fileName = fileName;
     }
 
-    public FileMessage(Commands command, String fileName, byte[] fileData) {
+    FileMessage(Commands command, String fileName, byte[] fileData) {
         super(command);
         this.fileName = fileName;
         this.fileData = fileData;
@@ -30,15 +30,15 @@ public class FileMessage extends Message {
         return super.getCommand();
     }
 
-    public String getFileName() {
+    String getFileName() {
         return fileName;
     }
 
-    public byte[] getFileData() {
+    byte[] getFileData() {
         return fileData;
     }
 
-    public List<String> getFileList() {
+    List<String> getFileList() {
         return fileList;
     }
 }

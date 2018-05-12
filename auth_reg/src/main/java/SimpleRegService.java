@@ -3,7 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BaseRegService extends BaseAuthService implements RegService {
+public class SimpleRegService extends SimpleAuthService implements RegService {
     @Override
     public void connect() {
         super.connect();

@@ -1,7 +1,7 @@
 import java.sql.*;
 
 
-public class BaseAuthService implements AuthService {
+public class SimpleAuthService implements AuthService {
     private Connection connect;
 
     @Override
@@ -9,9 +9,7 @@ public class BaseAuthService implements AuthService {
         try {
             Class.forName("org.sqlite.JDBC");
             connect = DriverManager.getConnection("jdbc:sqlite:main.db");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

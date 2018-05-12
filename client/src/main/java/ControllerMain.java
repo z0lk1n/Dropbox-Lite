@@ -22,10 +22,6 @@ public class ControllerMain {
     private ListView<String> filesListView;
     @FXML
     private Button uploadBtn;
-    @FXML
-    private Button downloadBtn;
-    @FXML
-    private Button deleteBtn;
 
     @FXML
     private void initialize() {
@@ -72,10 +68,6 @@ public class ControllerMain {
             Stage stage = (Stage) uploadBtn.getScene().getWindow();
             File selectedFile = fileChooser.showOpenDialog(stage);
 
-            if (selectedFile != null) {
-//            stage.display(selectedFile);
-            }
-
             byte[] fileData = null;
             try {
                 fileData = Files.readAllBytes(Paths.get(selectedFile.getPath()));
@@ -99,14 +91,14 @@ public class ControllerMain {
         return filesListView.getFocusModel().getFocusedItem();
     }
 
-    public static void setCore(ClientCore core) {
+    static void setCore(ClientCore core) {
         ControllerMain.core = core;
     }
 
-    public void refreshFilesList() {
+    private void refreshFilesList() {
         Platform.runLater(() -> {
-        filesList.clear();
-        filesList.addAll(core.getLocalFiles());
+            filesList.clear();
+            filesList.addAll(core.getLocalFiles());
         });
     }
 }

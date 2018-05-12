@@ -10,7 +10,6 @@ public class ClientMain extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
         primaryStage.setTitle(Const.TITLE_FORM);
-//        primaryStage.getIcons().add(new Image("file:ico.png"));
         primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
         primaryStage.show();
         primaryStage.setResizable(false);

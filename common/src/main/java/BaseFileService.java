@@ -23,7 +23,7 @@ public class BaseFileService implements FileService, Const {
 
     }
 
-    public static String getHash(String password) {
+    static String getHash(String password) {
         String algorithm = "SHA-256";
         String salt = "salt";
 
@@ -46,6 +46,7 @@ public class BaseFileService implements FileService, Const {
         System.arraycopy(saltArr, 0, saltPassword, 0, len1);
         System.arraycopy(passwordArr, 0, saltPassword, len1, len2);
 
+        assert messageDigest != null;
         byte[] saltedHash = messageDigest.digest(saltPassword);
 
         Base64.Encoder base64Encoder = Base64.getEncoder();

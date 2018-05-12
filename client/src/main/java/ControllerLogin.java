@@ -17,8 +17,6 @@ public class ControllerLogin implements Initializable, Const {
     @FXML
     public Button loginBtn;
     @FXML
-    private Button cancelBtn;
-    @FXML
     private TextField regLoginField;
     @FXML
     private PasswordField regPassField;
@@ -26,8 +24,6 @@ public class ControllerLogin implements Initializable, Const {
     private PasswordField regRePassField;
     @FXML
     private Button regLoginBtn;
-    @FXML
-    private Button regCancelBtn;
 
     private Socket socket;
     private ClientCore core;

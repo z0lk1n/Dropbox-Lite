@@ -20,12 +20,11 @@ public class ClientCore {
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
-    private boolean authorized;
     private Stage stageLogin;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    public ClientCore(Socket socket) {
+    ClientCore(Socket socket) {
         this.socket = socket;
         try {
             this.inputStream = socket.getInputStream();
@@ -35,14 +34,13 @@ public class ClientCore {
         }
     }
 
-    public void setAuthorized(boolean authorized, String client) {
-        this.authorized = authorized;
+    void setAuthorized(boolean authorized, String client) {
         if (authorized) {
             openMainForm(client);
         }
     }
 
-    public void connect() {
+    void connect() {
         try {
             Thread t = new Thread(() -> {
                 try {
@@ -99,18 +97,18 @@ public class ClientCore {
         }
     }
 
-    public void getFile(String file) {
+    void getFile(String file) {
         if (!localFiles.contains(file)) return;
         sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, file));
     }
 
-    public void addFile(String file, byte[] fileData) {
+    void addFile(String file, byte[] fileData) {
         if (localFiles.contains(file)) return;
         localFiles.add(file);
         sendMsg(new FileMessage(Commands.UPLOAD_FILE, file, fileData));
     }
 
-    public void removeFile(String file) {
+    void removeFile(String file) {
         if (!localFiles.contains(file)) return;
         localFiles.remove(file);
         sendMsg(new FileMessage(Commands.DELETE_FILE, file));
@@ -120,7 +118,7 @@ public class ClientCore {
         sendMsg(new FileMessage(Commands.FILES_LIST));
     }
 
-    public void showAlert(String msg) {
+    void showAlert(String msg) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(Const.OOPS);
@@ -130,19 +128,19 @@ public class ClientCore {
         });
     }
 
-    public void login(String login, String password) {
+    void login(String login, String password) {
         sendMsg(new AuthMessage(Commands.AUTH, login, password));
     }
 
-    public void registration(String login, String password) {
+    void registration(String login, String password) {
         sendMsg(new AuthMessage(Commands.REG, login, password));
     }
 
-    public void setStageLogin(Stage stageLogin) {
+    void setStageLogin(Stage stageLogin) {
         this.stageLogin = stageLogin;
     }
 
-    public void openMainForm(String client ) {
+    private void openMainForm(String client) {
         Platform.runLater(() -> {
             try {
                 stageLogin.close();
@@ -160,11 +158,11 @@ public class ClientCore {
         });
     }
 
-    public List<String> getLocalFiles() {
+    List<String> getLocalFiles() {
         return localFiles;
     }
 
-    public synchronized void sendMsg(Object msg) {
+    private synchronized void sendMsg(Object msg) {
         try {
             out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);
