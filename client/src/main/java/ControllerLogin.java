@@ -40,7 +40,7 @@ public class ControllerLogin implements Initializable, Const {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        core.setAuthorized(false);
+        core.setAuthorized(false, null);
         core.connect();
     }
 
@@ -56,5 +56,35 @@ public class ControllerLogin implements Initializable, Const {
         core.login(loginField.getText(), passField.getText());
         loginField.clear();
         passField.clear();
+    }
+
+    public void sendRegMsg() {
+        if (regLoginField.getText().isEmpty() || regPassField.getText().isEmpty() || regPassField.getText().isEmpty()) {
+            core.showAlert(Const.INCOMPLETE_AUTH);
+            return;
+        }
+        if (!regPassField.getText().equals(regRePassField.getText())) {
+            core.showAlert(Const.NOT_MATCH_PASS);
+            return;
+        }
+        if (socket == null || socket.isClosed()) {
+            core.connect();
+        }
+        core.setStageLogin((Stage) regLoginBtn.getScene().getWindow());
+        core.registration(regLoginField.getText(), regPassField.getText());
+        regLoginField.clear();
+        regPassField.clear();
+        regRePassField.clear();
+    }
+
+    public void clearLoginFields() {
+        loginField.clear();
+        passField.clear();
+    }
+
+    public void clearRegFields() {
+        regLoginField.clear();
+        regPassField.clear();
+        regRePassField.clear();
     }
 }

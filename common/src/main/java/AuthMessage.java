@@ -2,6 +2,10 @@ public class AuthMessage extends Message {
     private String password;
     private String client;
 
+    public AuthMessage(Commands command) {
+        super(command);
+    }
+
     public AuthMessage(Commands command, String client) {
         super(command);
         this.client = client;

@@ -1,6 +1,7 @@
-import java.sql.SQLException;
-
 public interface AuthService {
-    void connect() throws ClassNotFoundException, SQLException;
+    void connect();
+
     void disconnect();
+
+    Boolean authentication(String login, String password);
 }

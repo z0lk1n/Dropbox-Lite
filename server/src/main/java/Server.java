@@ -1,22 +1,28 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.Vector;
 
 public class Server implements Const {
     private Vector<ClientHandler> clients;
     private BaseAuthService authService;
+    private BaseRegService regService;
 
     public BaseAuthService getAuthService() {
         return authService;
+    }
+
+    public BaseRegService getRegService() {
+        return regService;
     }
 
     public Server() {
         try(ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             clients = new Vector<>();
             authService = new BaseAuthService();
+            regService = new BaseRegService();
             authService.connect();
+            regService.connect();
             System.out.println(Const.RUN_SERVER);
             while(true) {
                 Socket socket = serverSocket.accept();
@@ -25,10 +31,9 @@ public class Server implements Const {
             }
         }catch(IOException e)   {
             e.printStackTrace();
-        }catch(SQLException | ClassNotFoundException e)   {
-            System.out.println(Const.FAIL_AUTH_SERVICE);
         }finally {
             authService.disconnect();
+            regService.disconnect();
         }
     }
 

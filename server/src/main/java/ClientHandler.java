@@ -41,6 +41,20 @@ public class ClientHandler implements Const {
                                 break;
                             }
                         }
+                        if(msg.getCommand().equals(Commands.REG)) {
+                            String newClient = msg.getClient();
+                            String password = fileService.getHash(msg.getPassword());
+                            if (server.getRegService().registration(newClient, password)) {
+                                client = newClient;
+                                sendMsg(new AuthMessage(Commands.REG_SUCCESSFUl, client));
+                                server.addClient(this);
+                                getFilesList();
+                                sendMsg(new FileMessage(Commands.FILES_LIST, filesList));
+                                break;
+                            } else {
+                                sendMsg(new AuthMessage(Commands.REG_BAD));
+                            }
+                        }
                     }
                     while (true) {
                         in = new ObjectInputStream(inputStream);

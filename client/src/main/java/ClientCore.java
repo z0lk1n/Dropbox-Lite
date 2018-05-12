@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ClientCore {
     private List<String> localFiles = new ArrayList<>();
-    private String localDir;
+    private String localDir = "/home/vitaly/tmpFiles/";
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -27,7 +27,6 @@ public class ClientCore {
 
     public ClientCore(Socket socket) {
         this.socket = socket;
-        this.localDir = "/home/vitaly/tmpFiles/";
         try {
             this.inputStream = socket.getInputStream();
             this.outputStream = socket.getOutputStream();
@@ -36,10 +35,10 @@ public class ClientCore {
         }
     }
 
-    public void setAuthorized(boolean authorized) {
+    public void setAuthorized(boolean authorized, String client) {
         this.authorized = authorized;
         if (authorized) {
-            openMainForm();
+            openMainForm(client);
         }
     }
 
@@ -51,9 +50,15 @@ public class ClientCore {
                         in = new ObjectInputStream(inputStream);
                         AuthMessage msg = (AuthMessage) in.readObject();
                         if (msg.getCommand().equals(Commands.AUTH_SUCCESSFUl)) {
-                            setAuthorized(true);
+                            setAuthorized(true, msg.getClient());
                             break;
                         }
+                        if (msg.getCommand().equals(Commands.REG_SUCCESSFUl)) {
+                            setAuthorized(true, msg.getClient());
+                            break;
+                        }
+                        if (msg.getCommand().equals(Commands.REG_BAD))
+                            showAlert(Const.ACC_BUSY);
                     }
                     while (true) {
                         in = new ObjectInputStream(inputStream);
@@ -97,7 +102,6 @@ public class ClientCore {
     public void getFile(String file) {
         if (!localFiles.contains(file)) return;
         sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, file));
-
     }
 
     public void addFile(String file, byte[] fileData) {
@@ -130,18 +134,22 @@ public class ClientCore {
         sendMsg(new AuthMessage(Commands.AUTH, login, password));
     }
 
+    public void registration(String login, String password) {
+        sendMsg(new AuthMessage(Commands.REG, login, password));
+    }
+
     public void setStageLogin(Stage stageLogin) {
         this.stageLogin = stageLogin;
     }
 
-    public void openMainForm() {
+    public void openMainForm(String client ) {
         Platform.runLater(() -> {
             try {
                 stageLogin.close();
                 Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
                 Stage stage = new Stage();
                 stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setTitle(Const.TITLE_FORM);
+                stage.setTitle(Const.TITLE_FORM + " - [" + client + "]");
                 stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
                 stage.show();
                 stage.setResizable(false);

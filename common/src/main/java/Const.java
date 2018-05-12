@@ -12,6 +12,8 @@ public interface Const {
     String RUN_SERVER = "Server running... Waiting clients...";
     String LOST_SERVER = "The server stopped responding, try connecting again";
     String FAIL_CONNECT_SERVER = "Could not connect to the server. Check the network connection";
+    String NOT_MATCH_PASS = "Do not match passwords";
     String INCOMPLETE_AUTH = "Incomplete authorization data specified";
     String OOPS = "Oops, we are having problems";
+    String REG_SUCCESSFUl = "Registration completed successfully!";
 }
