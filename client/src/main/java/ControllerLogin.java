@@ -50,8 +50,7 @@ public class ControllerLogin implements Initializable, Const {
         }
         core.setStageLogin((Stage) loginBtn.getScene().getWindow());
         core.login(loginField.getText(), passField.getText());
-        loginField.clear();
-        passField.clear();
+        clearLoginFields();
     }
 
     public void sendRegMsg() {
@@ -68,9 +67,7 @@ public class ControllerLogin implements Initializable, Const {
         }
         core.setStageLogin((Stage) regLoginBtn.getScene().getWindow());
         core.registration(regLoginField.getText(), regPassField.getText());
-        regLoginField.clear();
-        regPassField.clear();
-        regRePassField.clear();
+        clearRegFields();
     }
 
     public void clearLoginFields() {

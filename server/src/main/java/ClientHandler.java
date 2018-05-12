@@ -12,7 +12,6 @@ class ClientHandler implements Const {
     private InputStream inputStream;
     private OutputStream outputStream;
     private ObjectInputStream in;
-    private ObjectOutputStream out;
     private BaseFileService fileService;
     private String client;
     private List<String> filesList;
@@ -118,7 +117,7 @@ class ClientHandler implements Const {
 
     private synchronized void sendMsg(Object msg) {
         try {
-            out = new ObjectOutputStream(outputStream);
+            ObjectOutputStream out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {

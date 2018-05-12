@@ -14,15 +14,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientCore {
+class ClientCore {
     private List<String> localFiles = new ArrayList<>();
     private String localDir = "/home/vitaly/tmpFiles/";
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
     private Stage stageLogin;
+    private Stage stageMain;
     private ObjectInputStream in;
-    private ObjectOutputStream out;
 
     ClientCore(Socket socket) {
         this.socket = socket;
@@ -84,6 +84,7 @@ public class ClientCore {
                 } finally {
                     try {
                         socket.close();
+//                        openLoginForm();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -114,10 +115,6 @@ public class ClientCore {
         sendMsg(new FileMessage(Commands.DELETE_FILE, file));
     }
 
-    public void getFilesList() {
-        sendMsg(new FileMessage(Commands.FILES_LIST));
-    }
-
     void showAlert(String msg) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -144,13 +141,14 @@ public class ClientCore {
         Platform.runLater(() -> {
             try {
                 stageLogin.close();
+                stageLogin = null;
                 Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
-                Stage stage = new Stage();
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setTitle(Const.TITLE_FORM + " - [" + client + "]");
-                stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
-                stage.show();
-                stage.setResizable(false);
+                stageMain = new Stage();
+                stageMain.initModality(Modality.APPLICATION_MODAL);
+                stageMain.setTitle(Const.TITLE_FORM + " - [" + client + "]");
+                stageMain.setScene(new Scene(root, stageMain.getWidth(), stageMain.getHeight()));
+                stageMain.show();
+                stageMain.setResizable(false);
                 ControllerMain.setCore(this);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -158,13 +156,31 @@ public class ClientCore {
         });
     }
 
+//    private void openLoginForm() {
+//        Platform.runLater(() -> {
+//            try {
+//                stageMain.close();
+//                stageMain = null;
+//                Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
+//                Stage stage = new Stage();
+//                stage.initModality(Modality.APPLICATION_MODAL);
+//                stage.setTitle(Const.TITLE_FORM);
+//                stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+//                stage.show();
+//                stage.setResizable(false);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//    }
+
     List<String> getLocalFiles() {
         return localFiles;
     }
 
     private synchronized void sendMsg(Object msg) {
         try {
-            out = new ObjectOutputStream(outputStream);
+            ObjectOutputStream out = new ObjectOutputStream(outputStream);
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {
