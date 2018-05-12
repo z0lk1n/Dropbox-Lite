@@ -1,49 +1,25 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class BaseFileService implements FileService, Const {
     @Override
-    public void uploadFile(FileMessage msg) {
-        String client = msg.getClient();
-        String fileName = msg.getFileName();
-        byte[] fileData = msg.getFileData();
-        try {
-            Files.createDirectories(Paths.get(Const.CORE_PATH + client));
-            Files.write(Paths.get(Const.CORE_PATH + client + "/" + fileName), fileData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void uploadFile(Object msg) {
+
     }
 
     @Override
-    public void downloadFile(FileMessage msg) {
-        String client = msg.getClient();
-        String fileName = msg.getFileName();
-        byte[] fileData = null;
-        try {
-            fileData = Files.readAllBytes(Paths.get(Const.CORE_PATH + client + "/" + fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void downloadFile(Object msg) {
+
     }
 
     @Override
-    public void deleteFile(FileMessage msg) {
-        String client = msg.getClient();
-        String fileName = msg.getFileName();
-        try {
-            Files.delete(Paths.get(Const.CORE_PATH + client + "/" + fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void deleteFile(Object msg) {
+
     }
 
     @Override
-    public void filesList(FileMessage msg) {
+    public void filesList(Object msg) {
 
     }
 

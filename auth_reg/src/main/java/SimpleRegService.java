@@ -1,3 +1,3 @@
-public class SimpleRegService implements RegService {
+public class SimpleRegService extends BaseAuthService implements RegService {
 
 }

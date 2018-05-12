@@ -22,7 +22,6 @@ public class ClientCore {
     private OutputStream outputStream;
     private boolean authorized;
     private Stage stageLogin;
-    private String login;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
@@ -97,24 +96,24 @@ public class ClientCore {
 
     public void getFile(String file) {
         if (!localFiles.contains(file)) return;
-        sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, login, file));
+        sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, file));
 
     }
 
     public void addFile(String file, byte[] fileData) {
         if (localFiles.contains(file)) return;
         localFiles.add(file);
-        sendMsg(new FileMessage(Commands.UPLOAD_FILE, login, file, fileData));
+        sendMsg(new FileMessage(Commands.UPLOAD_FILE, file, fileData));
     }
 
     public void removeFile(String file) {
         if (!localFiles.contains(file)) return;
         localFiles.remove(file);
-        sendMsg(new FileMessage(Commands.DELETE_FILE, login, file));
+        sendMsg(new FileMessage(Commands.DELETE_FILE, file));
     }
 
     public void getFilesList() {
-        sendMsg(new FileMessage(Commands.FILES_LIST, login));
+        sendMsg(new FileMessage(Commands.FILES_LIST));
     }
 
     public void showAlert(String msg) {
@@ -128,7 +127,6 @@ public class ClientCore {
     }
 
     public void login(String login, String password) {
-        this.login = login;
         sendMsg(new AuthMessage(Commands.AUTH, login, password));
     }
 

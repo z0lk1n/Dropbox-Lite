@@ -5,22 +5,22 @@ public class FileMessage extends Message {
     private byte[] fileData;
     private List<String> fileList;
 
-    public FileMessage(Commands command, String client) {
-        super(command, client);
+    public FileMessage(Commands command) {
+        super(command);
     }
 
-    public FileMessage(Commands command, String client, String fileName) {
-        super(command, client);
-        this.fileName = fileName;
-    }
-
-    public FileMessage(Commands command, String client, List<String> fileList) {
-        super(command, client);
+    public FileMessage(Commands command, List<String> fileList) {
+        super(command);
         this.fileList = fileList;
     }
 
-    public FileMessage(Commands command, String client, String fileName, byte[] fileData) {
-        super(command, client);
+    public FileMessage(Commands command, String fileName) {
+        super(command);
+        this.fileName = fileName;
+    }
+
+    public FileMessage(Commands command, String fileName, byte[] fileData) {
+        super(command);
         this.fileName = fileName;
         this.fileData = fileData;
     }
@@ -28,11 +28,6 @@ public class FileMessage extends Message {
     @Override
     public Commands getCommand() {
         return super.getCommand();
-    }
-
-    @Override
-    public String getClient() {
-        return super.getClient();
     }
 
     public String getFileName() {
