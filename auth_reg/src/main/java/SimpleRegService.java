@@ -25,13 +25,11 @@ public class SimpleRegService extends SimpleAuthService implements RegService {
             PreparedStatement ps = getConnect().prepareStatement("SELECT id FROM users WHERE login=?;");
             ps.setString(1, login);
             ResultSet rs = ps.executeQuery();
-
             if (!rs.next()) {
                 ps = getConnect().prepareStatement("INSERT INTO users (login, password) VALUES(?, ?);");
                 ps.setString(1, login);
                 ps.setString(2, password);
                 int result = ps.executeUpdate();
-
                 if (result > 0) {
                     return true;
                 }
