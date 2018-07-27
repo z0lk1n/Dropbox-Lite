@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-class ClientCore {
+class ClientCore implements ConnectInterface {
     private List<String> localFiles = new ArrayList<>();
     private String localDir = "/home/vitaly/tmpFiles/";
     private Socket socket;
@@ -34,13 +34,15 @@ class ClientCore {
         }
     }
 
-    void setAuthorized(boolean authorized, String client) {
+    @Override
+    public void setAuthorized(boolean authorized, String client) {
         if (authorized) {
             openMainForm(client);
         }
     }
 
-    void connect() {
+    @Override
+    public void connect() {
         try {
             Thread t = new Thread(() -> {
                 try {
@@ -125,11 +127,13 @@ class ClientCore {
         });
     }
 
-    void login(String login, String password) {
+    @Override
+    public void login(String login, String password) {
         sendMsg(new AuthMessage(Commands.AUTH, login, password));
     }
 
-    void registration(String login, String password) {
+    @Override
+    public void registration(String login, String password) {
         sendMsg(new AuthMessage(Commands.REG, login, password));
     }
 

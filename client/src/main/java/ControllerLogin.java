@@ -27,6 +27,7 @@ public class ControllerLogin implements Initializable, Const {
 
     private Socket socket;
     private ClientCore core;
+    private ConnectProxy connectProxy;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -36,8 +37,8 @@ public class ControllerLogin implements Initializable, Const {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        core.setAuthorized(false, null);
-        core.connect();
+        connectProxy = new ConnectProxy(core, socket);
+        connectProxy.setAuthorized(false, null);
     }
 
     public void sendAuthMsg() {
@@ -45,11 +46,9 @@ public class ControllerLogin implements Initializable, Const {
             core.showAlert(Const.INCOMPLETE_AUTH);
             return;
         }
-        if (socket == null || socket.isClosed()) {
-            core.connect();
-        }
+        connectProxy.connect();
         core.setStageLogin((Stage) loginBtn.getScene().getWindow());
-        core.login(loginField.getText(), passField.getText());
+        connectProxy.login(loginField.getText(), passField.getText());
         clearLoginFields();
     }
 
@@ -62,11 +61,9 @@ public class ControllerLogin implements Initializable, Const {
             core.showAlert(Const.NOT_MATCH_PASS);
             return;
         }
-        if (socket == null || socket.isClosed()) {
-            core.connect();
-        }
+        connectProxy.connect();
         core.setStageLogin((Stage) regLoginBtn.getScene().getWindow());
-        core.registration(regLoginField.getText(), regPassField.getText());
+        connectProxy.registration(regLoginField.getText(), regPassField.getText());
         clearRegFields();
     }
 
