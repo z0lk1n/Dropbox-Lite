@@ -6,7 +6,10 @@ import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,16 +22,17 @@ class ClientCore implements ConnectInterface {
     private String localDir = "/home/vitaly/tmpFiles/";
     private Socket socket;
     private InputStream inputStream;
-    private OutputStream outputStream;
     private Stage stageLogin;
     private Stage stageMain;
     private ObjectInputStream in;
+    private SendMessages sendMsg;
 
     ClientCore(Socket socket) {
         this.socket = socket;
         try {
             this.inputStream = socket.getInputStream();
-            this.outputStream = socket.getOutputStream();
+            OutputStream outputStream = socket.getOutputStream();
+            this.sendMsg = new SendMessages(outputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,16 +53,16 @@ class ClientCore implements ConnectInterface {
                     while (true) {
                         in = new ObjectInputStream(inputStream);
                         AuthMessage msg = (AuthMessage) in.readObject();
-                        if (msg.getCommand().equals(Commands.AUTH_SUCCESSFUl)) {
+
+                        if (msg.getCommand().equals(Commands.AUTH_SUCCESSFUl) ||
+                                msg.getCommand().equals(Commands.REG_SUCCESSFUl)) {
                             setAuthorized(true, msg.getClient());
                             break;
                         }
-                        if (msg.getCommand().equals(Commands.REG_SUCCESSFUl)) {
-                            setAuthorized(true, msg.getClient());
-                            break;
-                        }
-                        if (msg.getCommand().equals(Commands.REG_BAD))
+
+                        if (msg.getCommand().equals(Commands.REG_BAD)) {
                             showAlert(Const.ACC_BUSY);
+                        }
                     }
                     while (true) {
                         in = new ObjectInputStream(inputStream);
@@ -68,14 +72,12 @@ class ClientCore implements ConnectInterface {
                             localFiles = msg.getFileList();
                         }
                         if (msg.getCommand().equals(Commands.DOWNLOAD_FILE)) {
-                            String fileName = msg.getFileName();
-                            byte[] fileData = msg.getFileData();
                             try {
                                 Path path = Paths.get(localDir);
-                                if (!Files.exists(path))
+                                if (!Files.exists(path)) {
                                     Files.createDirectories(path);
-
-                                Files.write(Paths.get(path + "/" + fileName), fileData);
+                                }
+                                Files.write(Paths.get(path + "/" + msg.getFileName()), msg.getFileData());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -94,7 +96,6 @@ class ClientCore implements ConnectInterface {
             });
             t.setDaemon(true);
             t.start();
-
         } catch (Exception e) {
             showAlert(Const.FAIL_CONNECT_SERVER);
         }
@@ -102,19 +103,19 @@ class ClientCore implements ConnectInterface {
 
     void getFile(String file) {
         if (!localFiles.contains(file)) return;
-        sendMsg(new FileMessage(Commands.DOWNLOAD_FILE, file));
+        sendMsg.send(new FileMessage(Commands.DOWNLOAD_FILE, file));
     }
 
     void addFile(String file, byte[] fileData) {
         if (localFiles.contains(file)) return;
         localFiles.add(file);
-        sendMsg(new FileMessage(Commands.UPLOAD_FILE, file, fileData));
+        sendMsg.send(new FileMessage(Commands.UPLOAD_FILE, file, fileData));
     }
 
     void removeFile(String file) {
         if (!localFiles.contains(file)) return;
         localFiles.remove(file);
-        sendMsg(new FileMessage(Commands.DELETE_FILE, file));
+        sendMsg.send(new FileMessage(Commands.DELETE_FILE, file));
     }
 
     void showAlert(String msg) {
@@ -129,12 +130,12 @@ class ClientCore implements ConnectInterface {
 
     @Override
     public void login(String login, String password) {
-        sendMsg(new AuthMessage(Commands.AUTH, login, password));
+        sendMsg.send(new AuthMessage(Commands.AUTH, login, password));
     }
 
     @Override
     public void registration(String login, String password) {
-        sendMsg(new AuthMessage(Commands.REG, login, password));
+        sendMsg.send(new AuthMessage(Commands.REG, login, password));
     }
 
     void setStageLogin(Stage stageLogin) {
@@ -160,6 +161,10 @@ class ClientCore implements ConnectInterface {
         });
     }
 
+    List<String> getLocalFiles() {
+        return localFiles;
+    }
+
 //    private void openLoginForm() {
 //        Platform.runLater(() -> {
 //            try {
@@ -177,23 +182,4 @@ class ClientCore implements ConnectInterface {
 //            }
 //        });
 //    }
-
-    List<String> getLocalFiles() {
-        return localFiles;
-    }
-
-    private synchronized void sendMsg(Object msg) {
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(outputStream);
-            out.writeObject(msg);
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            try {
-                socket.close();
-            } catch (IOException e1) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

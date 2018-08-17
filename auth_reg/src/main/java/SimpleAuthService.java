@@ -13,7 +13,7 @@ public class SimpleAuthService implements AuthService {
     @Override
     public Boolean authentication(String login, String password) {
         try {
-            PreparedStatement ps = connect.prepareStatement("SELECT id FROM users WHERE login=? AND password=?;");
+            PreparedStatement ps = connect.prepareStatement("SELECT id FROM users WHERE login = ? AND password = ?;");
             ps.setString(1, login);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();

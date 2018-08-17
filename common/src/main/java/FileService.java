@@ -1,9 +1,7 @@
 public interface FileService {
-    void uploadFile(Object msg);
+    void uploadFile(FileMessage msg, String client);
 
-    void downloadFile(Object msg);
+    FileMessage downloadFile(FileMessage msg, String client);
 
-    void deleteFile(Object msg);
-
-    void filesList(Object msg);
+    void deleteFile(FileMessage msg, String client);
 }

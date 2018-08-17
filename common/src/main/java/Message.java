@@ -7,7 +7,7 @@ public abstract class Message implements Serializable {
         this.command = command;
     }
 
-    public Commands getCommand() {
+    protected Commands getCommand() {
         return command;
     }
 }
