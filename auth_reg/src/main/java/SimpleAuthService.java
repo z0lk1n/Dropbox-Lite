@@ -1,26 +1,13 @@
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SimpleAuthService implements AuthService {
     private Connection connect;
 
-    @Override
-    public void connect() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connect = DriverManager.getConnection("jdbc:sqlite:main.db");
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void disconnect() {
-        try {
-            connect.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    SimpleAuthService(Connection connect) {
+        this.connect = connect;
     }
 
     @Override
@@ -38,9 +25,5 @@ public class SimpleAuthService implements AuthService {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public Connection getConnect() {
-        return connect;
     }
 }

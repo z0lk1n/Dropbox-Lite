@@ -7,6 +7,7 @@ class Server implements Const {
     private Vector<ClientHandler> clients;
     private SimpleAuthService authService;
     private SimpleRegService regService;
+    private DatabaseConnector databaseConnector;
 
     SimpleAuthService getAuthService() {
         return authService;
@@ -19,10 +20,10 @@ class Server implements Const {
     Server() {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             clients = new Vector<>();
-            authService = new SimpleAuthService();
-            regService = new SimpleRegService();
-            authService.connect();
-            regService.connect();
+            databaseConnector = DatabaseConnector.getInstance();
+            databaseConnector.connect();
+            authService = new SimpleAuthService(databaseConnector.getConnect());
+            regService = new SimpleRegService(databaseConnector.getConnect());
             System.out.println(Const.RUN_SERVER);
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -32,8 +33,7 @@ class Server implements Const {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            authService.disconnect();
-            regService.disconnect();
+            databaseConnector.disconnect();
         }
     }
 

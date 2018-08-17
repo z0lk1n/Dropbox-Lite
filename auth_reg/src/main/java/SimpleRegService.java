@@ -3,30 +3,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SimpleRegService extends SimpleAuthService implements RegService {
-    @Override
-    public void connect() {
-        super.connect();
-    }
+public class SimpleRegService implements RegService {
+    private Connection connect;
 
-    @Override
-    public void disconnect() {
-        super.disconnect();
-    }
-
-    @Override
-    public Connection getConnect() {
-        return super.getConnect();
+    SimpleRegService(Connection connect) {
+        this.connect = connect;
     }
 
     @Override
     public Boolean registration(String login, String password) {
         try {
-            PreparedStatement ps = getConnect().prepareStatement("SELECT id FROM users WHERE login=?;");
+            PreparedStatement ps = connect.prepareStatement("SELECT id FROM users WHERE login=?;");
             ps.setString(1, login);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
-                ps = getConnect().prepareStatement("INSERT INTO users (login, password) VALUES(?, ?);");
+                ps = connect.prepareStatement("INSERT INTO users (login, password) VALUES(?, ?);");
                 ps.setString(1, login);
                 ps.setString(2, password);
                 int result = ps.executeUpdate();
