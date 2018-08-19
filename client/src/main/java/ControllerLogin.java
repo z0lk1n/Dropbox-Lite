@@ -39,6 +39,7 @@ public class ControllerLogin implements Initializable, Const {
         }
         connectProxy = new ConnectProxy(core, socket);
         connectProxy.setAuthorized(false, null);
+        core.connect();
     }
 
     public void sendAuthMsg() {
